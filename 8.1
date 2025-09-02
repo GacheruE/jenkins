@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Build') {
+            steps {
+                echo "Building using Maven..."
+                sh 'mvn clean package'
+            }
+        }
+
+        stage('Unit and Integration Tests') {
+            steps {
+                echo "Running Unit and Integration tests with EstherTest..."
+                sh 'mvn test'
+            }
+        }
+
+        stage('Code Analysis') {
+            steps {
+                echo "Running code analysis with SonarQube..."
+                sh 'mvn sonar:sonar'
+            }
+        }
+
+        stage('Security Scan') {
+            steps {
+                echo "Running security scan with OWASP Dependency-Check..."
+                sh 'mvn org.owasp:dependency-check-maven:check'
+            }
+        }
+
+        stage('Deploy to Staging') {
+            steps {
+                echo "Deploying application to Staging environment (AWS EC2)..."
+                sh 'ansible-playbook deploy-staging.yml'
+            }
+        }
+
+        stage('Integration Tests on Staging') {
+            steps {
+                echo "Running integration tests on staging..."
+                sh 'newman run postman_collection.json'
+            }
+        }
+
+        stage('Deploy to Production') {
+            steps {
+               
+                echo "Deploying application to Production environment (AWS EC2)..."
+                sh 'ansible-playbook deploy-production.yml'
+            }
+        }
+    }
+
+    
+}
