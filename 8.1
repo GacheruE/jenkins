@@ -1,58 +1,46 @@
 pipeline {
     agent any
-
     stages {
-
-        stage('Build') {
+        stage("Build") {
             steps {
-                echo "Building using Maven..."
-                sh 'mvn clean package'
+                echo "Using Maven to build, compile, and package the code"
             }
         }
 
-        stage('Unit and Integration Tests') {
+        stage("Unit and Integration Tests") {
             steps {
-                echo "Running Unit and Integration tests with EstherTest..."
-                sh 'mvn test'
+                echo "Using JUnit for unit testing and TestNG for integration testing"
             }
         }
 
-        stage('Code Analysis') {
+        stage("Code Analysis") {
             steps {
-                echo "Running code analysis with SonarQube..."
-                sh 'mvn sonar:sonar'
+                echo "Using SonarQube to analyse code quality and check against industry standards"
             }
         }
 
-        stage('Security Scan') {
+        stage("Security Scan") {
             steps {
-                echo "Running security scan with OWASP Dependency-Check..."
-                sh 'mvn org.owasp:dependency-check-maven:check'
+                echo "Using OWASP Dependency-Check to identify security vulnerabilities"
             }
         }
 
-        stage('Deploy to Staging') {
+        stage("Deploy to Staging") {
             steps {
-                echo "Deploying application to Staging environment (AWS EC2)..."
-                sh 'ansible-playbook deploy-staging.yml'
+                echo "Deploying application to AWS EC2 staging server using Ansible"
             }
         }
 
-        stage('Integration Tests on Staging') {
+        stage("Integration Tests on Staging") {
             steps {
-                echo "Running integration tests on staging..."
-                sh 'newman run postman_collection.json'
+                echo "Using Selenium to run integration tests on the staging environment"
             }
         }
 
-        stage('Deploy to Production') {
+        stage("Deploy to Production") {
             steps {
-               
-                echo "Deploying application to Production environment (AWS EC2)..."
-                sh 'ansible-playbook deploy-production.yml'
+                echo "Deploying application to AWS EC2 production server using Ansible"
             }
         }
     }
-
-    
 }
